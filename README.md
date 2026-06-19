@@ -10,6 +10,8 @@
 
 ![Tape terminal](docs/images/landing.png)
 
+**Live demo: [tape-site.vercel.app](https://tape-site.vercel.app)** — reads the live on-chain record from Walrus + Sui and lets you re-derive every number in your browser. The frontend is also published on Walrus Sites (details below); Vercel just serves the static files, the data still comes from Walrus and Sui.
+
 Fund managers and copy-trading bots report whatever returns they want. The numbers in the pitch deck are just numbers - you have no way to tell a real 40% year from a backtest someone screenshotted. Tape fixes that for on-chain strategies: an autonomous agent writes every decision, fill, and mark to Walrus as its memory, anchors each one on Sui with a `Clock` timestamp, and a terminal recomputes the performance metrics from that record. Click any number and re-derive it yourself.
 
 Built for **Sui Overflow 2026 - Walrus track**.
@@ -83,6 +85,7 @@ Net return after fees, Sharpe, Sortino, max drawdown, win rate, profit factor, T
 | TapeLog (the demo record) | `0x0fd9dad1d1883f783423d124ba0d70c93a0f9542a7a34bce3cd865ae5f436ddb` |
 | Agent address | `0x2b311a914950323ebb772ccb12b0b286bb3f28a9f6e049c3fa577cd230a87587` |
 | Walrus Site object | `0x0f68799b0b64e05dee66f9c365b7709a48b1f4fe8ffd7f43481ed6ab3a495fca` |
+| Live terminal (Vercel) | https://tape-site.vercel.app |
 
 The terminal is published on Walrus Sites. The public `wal.app` portal only serves mainnet sites, so to browse the testnet deployment you either self-host a portal (see the Walrus docs) or just run it locally - the local terminal reads the exact same on-chain record and blobs.
 
