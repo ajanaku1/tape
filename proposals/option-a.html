@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tape — Option A · Terminal</title>
+<style>
+  /* DNA-A: dense · slate · mono · amber+green · forensic */
+  :root{
+    --bg:#0a0e14; --panel:#0f141d; --panel2:#131a25; --line:#1e2733;
+    --ink:#c9d4e3; --dim:#6b7889; --faint:#3d4757;
+    --green:#3fe08f; --green-dim:#1c5e40; --amber:#ffb454; --red:#ff5d6c;
+    --accent:#5ac8fa;
+    --mono:"SF Mono",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.4}
+  .num{font-variant-numeric:tabular-nums}
+  a{color:var(--accent);text-decoration:none}
+  /* top bar */
+  .top{display:flex;align-items:center;gap:18px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .brand{font-weight:700;letter-spacing:.18em;color:#fff}
+  .brand .dot{color:var(--green)}
+  .top .meta{color:var(--dim);font-size:11px}
+  .top .meta b{color:var(--ink);font-weight:500}
+  .live{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--green);font-size:11px}
+  .live .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .ticker{padding:5px 14px;background:#0c1118;border-bottom:1px solid var(--line);color:var(--dim);font-size:11px;white-space:nowrap;overflow:hidden}
+  .ticker b{color:var(--ink)} .ticker .up{color:var(--green)} .ticker .dn{color:var(--red)}
+  /* layout */
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:1px;background:var(--line);height:calc(100vh - 78px)}
+  .col{background:var(--bg);overflow:auto}
+  .sec{border-bottom:1px solid var(--line)}
+  .sec h2{font-size:10px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin:0;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+  /* metrics */
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr)}
+  .m{padding:11px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer;position:relative}
+  .m:hover{background:var(--panel2)}
+  .m.sel{background:#11202a;box-shadow:inset 2px 0 0 var(--accent)}
+  .m .k{color:var(--dim);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+  .m .v{font-size:21px;margin-top:5px;color:#fff}
+  .m .v.g{color:var(--green)} .m .v.r{color:var(--red)}
+  .m .badge{position:absolute;top:9px;right:9px;font-size:9px;color:var(--green);border:1px solid var(--green-dim);border-radius:3px;padding:1px 4px}
+  /* chart */
+  .chart{padding:12px}
+  .chart svg{width:100%;height:150px;display:block}
+  .axis{color:var(--faint);font-size:10px}
+  /* blotter */
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{color:var(--dim);font-weight:500;text-align:right;padding:6px 12px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+  th:first-child,td:first-child{text-align:left}
+  td{padding:6px 12px;text-align:right;border-bottom:1px solid #161d27}
+  tr:hover td{background:var(--panel2)}
+  .tag{font-size:10px;padding:1px 5px;border-radius:3px}
+  .tag.buy{color:var(--green);background:rgba(63,224,143,.1)}
+  .tag.sell{color:var(--amber);background:rgba(255,180,84,.1)}
+  .chip{font-family:var(--mono);font-size:10px;color:var(--accent);background:#0c1620;border:1px solid #15303f;border-radius:3px;padding:1px 5px}
+  /* right rail: drill-down */
+  .dd{padding:12px}
+  .dd .title{font-size:14px;color:#fff;margin-bottom:2px}
+  .dd .sub{color:var(--dim);font-size:11px;margin-bottom:12px}
+  .formula{background:#0c111a;border:1px solid var(--line);border-radius:5px;padding:9px 10px;color:var(--ink);font-size:11px;margin-bottom:12px}
+  .formula em{color:var(--amber);font-style:normal}
+  .proofs{display:flex;flex-direction:column;gap:7px}
+  .proof{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:8px 9px}
+  .proof .pl{display:flex;justify-content:space-between;color:var(--dim);font-size:10px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+  .proof .row{display:flex;gap:6px;align-items:center;font-size:11px;padding:2px 0}
+  .proof .row span{color:var(--dim);width:46px}
+  .verify{margin-top:14px;width:100%;border:1px solid var(--green-dim);background:linear-gradient(180deg,#10231a,#0d1a14);color:var(--green);padding:10px;border-radius:6px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;cursor:pointer}
+  .verify:hover{background:#123524}
+  .vstate{margin-top:9px;font-size:11px;color:var(--green);display:flex;align-items:center;gap:6px}
+  /* compare */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
+  .card{padding:14px;background:var(--bg)}
+  .card.bad{background:#140e10}
+  .card .h{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:10px}
+  .card.good .h{color:var(--green)} .card.bad .h{color:var(--red)}
+  .card .big{font-size:30px;color:#fff;margin:4px 0}
+  .card .lia{font-size:11px;color:var(--dim);margin-top:8px}
+  .card.bad .lia{color:#a36b72}
+  .seal{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:50%;font-size:11px}
+  .seal.g{background:var(--green);color:#04130c} .seal.b{background:var(--red);color:#1b0608}
+  .footnote{padding:10px 14px;color:var(--faint);font-size:10px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand">TAPE<span class="dot">.</span></div>
+    <div class="meta">AGENT <b>0x2b31…7587</b></div>
+    <div class="meta">TAPELOG <b>0x24ae…0c55</b></div>
+    <div class="meta">ENTRIES <b class="num">63</b></div>
+    <div class="meta">VENUE <b>Pyth · DeepBook v3</b></div>
+    <div class="live"><span class="pulse"></span>LIVE · TESTNET</div>
+  </div>
+  <div class="ticker">
+    SUI/USD <b class="num">0.7119</b> <span class="up">▲0.11%</span> &nbsp;·&nbsp; EQUITY <b class="num">$101.84</b> <span class="up">▲1.84%</span>
+    &nbsp;·&nbsp; vs HOLD-SUI <span class="up">+0.93%</span> &nbsp;·&nbsp; LAST ANCHOR seq <b class="num">62</b> @ 14:48:21Z &nbsp;·&nbsp; OPEN POS <b class="num">20 SUI</b>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <div class="col">
+      <div class="sec">
+        <h2>Performance · recomputed client-side from the verified record</h2>
+        <div class="metrics">
+          <div class="m"><div class="k">Net return</div><div class="v g num">+1.84%</div><div class="badge">✓</div></div>
+          <div class="m sel"><div class="k">Sharpe (ann.)</div><div class="v num">1.97</div><div class="badge">✓</div></div>
+          <div class="m"><div class="k">Sortino</div><div class="v num">2.84</div><div class="badge">✓</div></div>
+          <div class="m"><div class="k">Max drawdown</div><div class="v r num">−0.74%</div><div class="badge">✓</div></div>
+          <div class="m"><div class="k">Win rate</div><div class="v num">61.5%</div><div class="badge">✓</div></div>
+          <div class="m"><div class="k">Profit factor</div><div class="v num">1.71</div><div class="badge">✓</div></div>
+          <div class="m"><div class="k">TWR / MWR</div><div class="v num">1.84 / 1.79</div><div class="badge">✓</div></div>
+          <div class="m"><div class="k">vs Hold-SUI</div><div class="v g num">+0.93%</div><div class="badge">✓</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Equity curve · marked at anchored Pyth prices</h2>
+        <div class="chart">
+          <svg viewBox="0 0 600 150" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#1e2733" stroke-width="1" points="0,75 600,75"/>
+            <polyline fill="none" stroke="#3fe08f" stroke-width="2"
+              points="0,120 50,118 100,124 150,110 200,112 250,96 300,104 350,88 400,80 450,86 500,64 550,58 600,50"/>
+            <polygon fill="rgba(63,224,143,.08)" points="0,120 50,118 100,124 150,110 200,112 250,96 300,104 350,88 400,80 450,86 500,64 550,58 600,50 600,150 0,150"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Trade blotter · 24 iterations</h2>
+        <table>
+          <thead><tr><th>Seq</th><th>Time (Z)</th><th>Kind</th><th>Action</th><th>Price</th><th>Size</th><th>Equity</th><th>Proof</th></tr></thead>
+          <tbody>
+            <tr><td class="num">58</td><td class="num">14:47:09</td><td>decision</td><td><span class="tag buy">BUY</span></td><td class="num">0.7102</td><td class="num">20</td><td class="num">$101.6</td><td><span class="chip">blob:Bc1f…</span></td></tr>
+            <tr><td class="num">59</td><td class="num">14:47:14</td><td>execution</td><td><span class="tag buy">FILL</span></td><td class="num">0.7102</td><td class="num">20</td><td class="num">$101.6</td><td><span class="chip">blob:o8GL…</span></td></tr>
+            <tr><td class="num">60</td><td class="num">14:47:19</td><td>mark</td><td>—</td><td class="num">0.7108</td><td class="num">—</td><td class="num">$101.7</td><td><span class="chip">blob:1JKd…</span></td></tr>
+            <tr><td class="num">61</td><td class="num">14:47:33</td><td>decision</td><td><span class="tag sell">SELL</span></td><td class="num">0.7121</td><td class="num">20</td><td class="num">$101.8</td><td><span class="chip">blob:Zk29…</span></td></tr>
+            <tr><td class="num">62</td><td class="num">14:48:21</td><td>mark</td><td>—</td><td class="num">0.7119</td><td class="num">—</td><td class="num">$101.8</td><td><span class="chip">blob:Pm44…</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT: drill-down + compare -->
+    <div class="col">
+      <div class="sec">
+        <h2>Drill-down · Sharpe (annualized)</h2>
+        <div class="dd">
+          <div class="title num">1.97</div>
+          <div class="sub">Derived from 24 marks · seq 0–62 · no trusted server</div>
+          <div class="formula">Sharpe = (mean(r) − r<sub>f</sub>) / σ(r) · √N &nbsp; where <em>r</em> = per-mark equity returns read from anchored blobs</div>
+          <div class="proofs">
+            <div class="proof">
+              <div class="pl"><span>MARK seq 60</span><span>kind 2</span></div>
+              <div class="row"><span>blob</span><span class="chip">1JKd_l3y…6tNs</span></div>
+              <div class="row"><span>txn</span><span class="chip">2BEuXdXt…Y2FZ</span></div>
+              <div class="row"><span>clock</span><span class="num">2026-06-18 14:47:19.331Z</span></div>
+              <div class="row"><span>sha256</span><span class="chip">27bc6258…a1</span></div>
+            </div>
+            <div class="proof">
+              <div class="pl"><span>MARK seq 62</span><span>kind 2</span></div>
+              <div class="row"><span>blob</span><span class="chip">Pm44xQ0a…9dKE</span></div>
+              <div class="row"><span>txn</span><span class="chip">HjdYnULg…Vh1V</span></div>
+              <div class="row"><span>clock</span><span class="num">2026-06-18 14:48:21.004Z</span></div>
+            </div>
+          </div>
+          <button class="verify">⟳ Verify this number independently</button>
+          <div class="vstate">✓ Re-fetched 24 blobs · re-hashed · matched on-chain · recomputed 1.97</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>The tape vs the claim</h2>
+        <div class="compare">
+          <div class="card good">
+            <div class="h"><span class="seal g">✓</span> VERIFIED TAPE</div>
+            <div class="k" style="color:var(--dim);font-size:10px">SHARPE</div>
+            <div class="big num">1.97</div>
+            <div class="lia">Every input anchored on Sui + stored on Walrus. Immutable, complete, timestamped by Clock. Re-derivable by anyone.</div>
+          </div>
+          <div class="card bad">
+            <div class="h"><span class="seal b">✗</span> CLAIMED (PDF)</div>
+            <div class="k" style="color:#a36b72;font-size:10px">SHARPE</div>
+            <div class="big num">4.20</div>
+            <div class="lia">A number in a deck. No record, no timestamps, possibly backdated, cherry-picked, or invented. Trust required.</div>
+          </div>
+        </div>
+        <div class="footnote">Tape proves the history is <b>real</b> — tamper-evident, complete, not backdated. It does not predict future performance. Marks inherit the Pyth oracle's trust assumption (also anchored).</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

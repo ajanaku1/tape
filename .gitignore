@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env*.local
+*.log
+tape-move/build/
+deploy/*.local.json
+.DS_Store
+.vercel
+
+# Local
+.claude/
+
+# build contract / prompt (local only)
+PLAN.md
+plan.md
+prompt.md

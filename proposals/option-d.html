@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tape — D · Quiet Terminal</title>
+<style>
+  /* DNA-D: calm terminal · layered black · one mint accent · tabular numerals · air */
+  :root{
+    --bg:#070809;
+    --s1:#0d0f12;            /* raised surface */
+    --s2:#121519;           /* card */
+    --hair:rgba(255,255,255,.07);
+    --hair2:rgba(255,255,255,.04);
+    --ink:#eef1f5; --dim:#8b93a1; --faint:#5a626f;
+    --mint:#5eead4; --mint-deep:#0f3b35; --good:#5eead4; --bad:#ff7a85;
+    --link:#8ab4ff;
+    --sans:-apple-system,BlinkMacSystemFont,"Inter",Segoe UI,Roboto,sans-serif;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+    --r:12px; --rs:8px;
+    --shadow:0 24px 60px -30px rgba(0,0,0,.85);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(900px 500px at 78% -8%,rgba(94,234,212,.06),transparent 60%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";letter-spacing:-.01em}
+  .mono{font-family:var(--mono)}
+  .wrap{max-width:1080px;margin:0 auto;padding:22px 26px 64px}
+
+  /* top bar */
+  .bar{display:flex;align-items:center;gap:16px;margin-bottom:34px}
+  .logo{font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .logo .d{color:var(--mint)}
+  .bar .id{color:var(--faint);font-size:12px;font-family:var(--mono)}
+  .bar .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--mint);
+    background:rgba(94,234,212,.08);border:1px solid rgba(94,234,212,.2);padding:5px 11px;border-radius:999px}
+  .pill .p{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:stretch;margin-bottom:14px}
+  .hero .head h1{font-size:30px;font-weight:680;letter-spacing:-.02em;margin:8px 0 10px;line-height:1.12}
+  .hero .head p{color:var(--dim);font-size:14.5px;max-width:42ch;margin:0}
+  .hero .head .kv{display:flex;gap:22px;margin-top:22px}
+  .hero .head .kv div{font-size:12px;color:var(--faint)}
+  .hero .head .kv b{display:block;color:var(--ink);font-size:14px;font-weight:600;margin-top:3px;font-family:var(--mono)}
+
+  .marquee{background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--hair);
+    border-radius:var(--r);padding:24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .marquee::after{content:"";position:absolute;inset:0;background:radial-gradient(400px 200px at 90% 0,rgba(94,234,212,.08),transparent)}
+  .marquee>*{position:relative}
+  .marquee .lbl{color:var(--dim);font-size:12.5px;display:flex;align-items:center;gap:8px}
+  .seal{width:18px;height:18px;border-radius:50%;background:var(--mint);color:#04130c;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+  .marquee .big{font-size:60px;font-weight:720;color:var(--mint);margin:10px 0 2px;line-height:1}
+  .marquee .since{color:var(--faint);font-size:12.5px}
+  .verify{margin-top:20px;display:inline-flex;align-items:center;gap:9px;width:100%;justify-content:center;
+    background:var(--mint);color:#052b25;font-weight:700;font-size:14px;border:none;padding:13px;border-radius:var(--rs);
+    cursor:pointer;transition:transform .15s ease-out,filter .15s ease-out}
+  .verify:hover{filter:brightness(1.05)} .verify:active{transform:translateY(1px)}
+  .vnote{margin-top:12px;color:var(--mint);font-size:12.5px;display:flex;align-items:center;gap:7px}
+
+  /* helper line */
+  .explain{color:var(--dim);font-size:13px;margin:30px 2px 14px;display:flex;align-items:center;gap:9px}
+  .explain .tic{color:var(--mint)}
+
+  /* metric row */
+  .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .metric{background:var(--s1);border:1px solid var(--hair2);border-radius:var(--r);padding:16px 16px 14px;
+    cursor:pointer;transition:border-color .15s ease-out,background .15s ease-out;position:relative}
+  .metric:hover{border-color:var(--hair);background:var(--s2)}
+  .metric.active{border-color:rgba(94,234,212,.45);background:var(--s2)}
+  .metric .k{color:var(--dim);font-size:12px}
+  .metric .v{font-size:25px;font-weight:640;margin-top:9px;color:var(--ink)}
+  .metric .v.g{color:var(--mint)} .metric .v.r{color:var(--bad)}
+  .metric .chk{margin-top:9px;color:var(--mint);font-size:11px;display:flex;align-items:center;gap:5px;opacity:.85}
+  .metric .chk i{width:5px;height:5px;border-radius:50%;background:var(--mint);font-style:normal}
+
+  /* lower: chart + proof */
+  .lower{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .panel{background:var(--s1);border:1px solid var(--hair2);border-radius:var(--r);padding:18px 20px}
+  .panel h3{font-size:12.5px;color:var(--dim);font-weight:600;margin:0 0 14px;letter-spacing:.01em}
+  .chart svg{width:100%;height:170px;display:block}
+  .chart .legend{display:flex;justify-content:space-between;color:var(--faint);font-size:11px;margin-top:8px}
+
+  /* proof chain */
+  .chain{display:flex;flex-direction:column;gap:10px}
+  .step{display:flex;gap:12px;align-items:flex-start}
+  .step .rail{display:flex;flex-direction:column;align-items:center;padding-top:2px}
+  .step .node{width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--hair);
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mint)}
+  .step .line{width:1px;flex:1;background:var(--hair);margin:3px 0;min-height:14px}
+  .step:last-child .line{display:none}
+  .step .body{flex:1;padding-bottom:4px}
+  .step .body .t{font-size:13px;color:var(--ink);margin-bottom:3px}
+  .step .body .d{font-size:12px;color:var(--dim);font-family:var(--mono)}
+  .step .body .d a{color:var(--link);text-decoration:none}
+  .matched{color:var(--mint);font-size:12px}
+
+  /* contrast strip */
+  .contrast{margin-top:14px;background:var(--s1);border:1px solid var(--hair2);border-radius:var(--r);
+    display:grid;grid-template-columns:1fr 1px 1fr;overflow:hidden}
+  .contrast .vline{background:var(--hair)}
+  .contrast .side{padding:20px 22px}
+  .contrast .tagline{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:10px}
+  .contrast .good .tagline{color:var(--mint)} .contrast .bad .tagline{color:var(--bad)}
+  .contrast .n{font-size:34px;font-weight:700;color:var(--ink)}
+  .contrast .sub{color:var(--dim);font-size:12.5px;margin-top:8px;max-width:40ch;line-height:1.5}
+  .contrast .bad .sub{color:#9a7176}
+  .dot{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+  .dot.g{background:var(--mint);color:#052b25} .dot.r{background:var(--bad);color:#2a0a0e}
+  .foot{color:var(--faint);font-size:11.5px;margin-top:22px;line-height:1.6;max-width:80ch}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo">Tape<span class="d">.</span></div>
+      <div class="id">agent 0x2b31…7587 · log 0x0fd9…6ddb</div>
+      <div class="right">
+        <span class="pill"><span class="p"></span>Live · Testnet</span>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="head">
+        <div style="color:var(--mint);font-size:12.5px;letter-spacing:.02em">VERIFIABLE TRACK RECORD</div>
+        <h1>Performance you don't have to take on faith.</h1>
+        <p>An autonomous agent's every decision, fill, and mark — written to Walrus, anchored on Sui. The numbers here are recomputed in your browser from that record.</p>
+        <div class="kv">
+          <div>Entries<b class="num">63</b></div>
+          <div>Trades<b class="num">21</b></div>
+          <div>Period<b class="num">27 min</b></div>
+          <div>Marked by<b>Pyth · Clock</b></div>
+        </div>
+      </div>
+      <div class="marquee">
+        <div class="lbl"><span class="seal">✓</span> Net return · after fees · verified</div>
+        <div class="big num">+1.84%</div>
+        <div class="since">vs Hold-SUI <span style="color:var(--mint)">+0.93%</span> · started $100.00 → $101.84</div>
+        <button class="verify">⟳ &nbsp;Verify this number independently</button>
+        <div class="vnote">✓ re-fetched 24 blobs · re-hashed · matched on-chain · recomputed +1.84%</div>
+      </div>
+    </div>
+
+    <div class="explain"><span class="tic">✓</span> Every figure below is recomputed from the verified record — no trusted server. Select one to open and re-derive its proof.</div>
+
+    <!-- METRICS -->
+    <div class="metrics">
+      <div class="metric active"><div class="k">Sharpe</div><div class="v num">1.97</div><div class="chk"><i></i>verified</div></div>
+      <div class="metric"><div class="k">Sortino</div><div class="v num">2.84</div><div class="chk"><i></i>verified</div></div>
+      <div class="metric"><div class="k">Max drawdown</div><div class="v r num">−0.74%</div><div class="chk"><i></i>verified</div></div>
+      <div class="metric"><div class="k">Win rate</div><div class="v num">61.5%</div><div class="chk"><i></i>verified</div></div>
+      <div class="metric"><div class="k">Profit factor</div><div class="v num">1.71</div><div class="chk"><i></i>verified</div></div>
+    </div>
+
+    <!-- LOWER -->
+    <div class="lower">
+      <div class="panel chart">
+        <h3>Equity · marked at anchored Pyth prices</h3>
+        <svg viewBox="0 0 560 170" preserveAspectRatio="none">
+          <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(94,234,212,.22)"/><stop offset="1" stop-color="rgba(94,234,212,0)"/>
+          </linearGradient></defs>
+          <line x1="0" y1="130" x2="560" y2="130" stroke="rgba(255,255,255,.05)"/>
+          <polygon fill="url(#g)" points="0,132 56,128 112,135 168,118 224,121 280,101 336,110 392,86 448,80 504,58 560,46 560,170 0,170"/>
+          <polyline fill="none" stroke="#5eead4" stroke-width="2.25" points="0,132 56,128 112,135 168,118 224,121 280,101 336,110 392,86 448,80 504,58 560,46"/>
+        </svg>
+        <div class="legend"><span>14:31Z · $100.00</span><span>14:58Z · $101.84</span></div>
+      </div>
+
+      <div class="panel">
+        <h3>Proof of "Sharpe = 1.97" — blob → hash → anchor</h3>
+        <div class="chain">
+          <div class="step"><div class="rail"><div class="node">◆</div><div class="line"></div></div>
+            <div class="body"><div class="t">Walrus blob · mark seq 60</div><div class="d"><a>1JKd_l3y…6tNs ↗</a> · equity $101.74</div></div></div>
+          <div class="step"><div class="rail"><div class="node">#</div><div class="line"></div></div>
+            <div class="body"><div class="t">Re-hash the bytes (sha-256)</div><div class="d">27bc6258…a1 &nbsp;<span class="matched">= on-chain ✓</span></div></div></div>
+          <div class="step"><div class="rail"><div class="node">⛓</div><div class="line"></div></div>
+            <div class="body"><div class="t">Sui anchor · Clock-stamped</div><div class="d"><a>tx 2BEu…Y2FZ ↗</a> · 14:47:19.331Z</div></div></div>
+          <div class="step"><div class="rail"><div class="node" style="background:var(--mint);color:#052b25;border-color:var(--mint)">✓</div></div>
+            <div class="body"><div class="t">Recomputed from 24 such marks → <b style="color:var(--mint)">1.97</b></div><div class="d">no server trusted · all client-side</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRAST -->
+    <div class="contrast">
+      <div class="side good">
+        <div class="tagline"><span class="dot g">✓</span> VERIFIED TAPE</div>
+        <div class="n num">1.97</div>
+        <div class="sub">Sharpe backed by an immutable, complete, Clock-timestamped record. Re-derivable by anyone. Cannot be backdated.</div>
+      </div>
+      <div class="vline"></div>
+      <div class="side bad">
+        <div class="tagline"><span class="dot r">✗</span> CLAIMED IN A DECK</div>
+        <div class="n num">4.20</div>
+        <div class="sub">Sharpe asserted with no record behind it — possibly simulated, backdated, or invented. Trust required.</div>
+      </div>
+    </div>
+
+    <p class="foot">Tape proves the history is <b style="color:var(--dim)">real</b> — tamper-evident, complete, and not backdated. It does not claim the strategy is good or that future returns will follow. Mark prices come from the Pyth oracle and are themselves anchored, so they can't be massaged after the fact; Tape inherits the oracle's trust assumption.</p>
+  </div>
+</body>
+</html>

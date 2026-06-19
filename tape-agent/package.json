@@ -1,0 +1,23 @@
+{
+  "name": "tape-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Autonomous strategy agent: snapshot DeepBook -> Claude decision -> execute -> record+anchor",
+  "scripts": {
+    "start": "tsx src/agent.ts"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.45.2",
+    "@mysten/deepbook-v3": "^0.12.30"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "comment": "override: dedupe @mysten/sui so DeepBookClient and our client share one Transaction/SuiClient type (1.45.2 verified compatible with deepbook-v3 at runtime in the Day-1 spike)",
+  "overrides": {
+    "@mysten/sui": "$@mysten/sui"
+  }
+}

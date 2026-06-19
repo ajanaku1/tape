@@ -1,0 +1,26 @@
+{
+  "network": "sui-testnet",
+  "rpc": "https://fullnode.testnet.sui.io:443",
+  "packageId": "0x0add02ada3abf0f6e5d8205416a6193c6df379850b22ed08565e12d0cc2f7fd7",
+  "module": "tape_log",
+  "tapeLog": "0x0fd9dad1d1883f783423d124ba0d70c93a0f9542a7a34bce3cd865ae5f436ddb",
+  "tapeCap": "0x93125e8283c0a2a5de4ddc89ba500ae87e8f4309fd552594537908f5d1f60d54",
+  "tapeLogPrevious": "0x24ae4ccafdc8923ef28326da925730ad028a7d05cd2056f491fc9e452f0c55c9",
+  "upgradeCap": "0xd1b0e37fc0c4d05e59aae57754463fed908fdf2dc18ee3fbe9482fb9269b6108",
+  "agentAddress": "0x2b311a914950323ebb772ccb12b0b286bb3f28a9f6e049c3fa577cd230a87587",
+  "publishTx": "3xoHKCRBSuoayK3eSSJJRTmRxbuA4MSFaK8b53F1rxSW",
+  "createLogTx": "9tuFCQGRjfrEf5khCqjXZRWSdodYxkRR3qgwrYWSR3nZ",
+  "deployedAt": "2026-06-17",
+  "walrusSite": {
+    "siteObjectId": "0x0f68799b0b64e05dee66f9c365b7709a48b1f4fe8ffd7f43481ed6ab3a495fca",
+    "base36": "dtpbn7xa1ycwnc6q0i56h6f8erj9e3t25l528vqhsnvlq6uve",
+    "epochs": 5,
+    "note": "Deployed on Walrus Sites (testnet). wal.app portal is mainnet-only; browse via a self-hosted/third-party testnet portal, or run locally (npm run dev in tape-terminal). Mainnet redeploy gives a public <base36>.wal.app URL."
+  },
+  "deepbook": {
+    "env": "testnet",
+    "pool": "SUI_DBUSDC",
+    "balanceManager": "0xaadc54f46bd5189c29ab5644f93a7033313877f28f52b6675ac657d2005c8c4d",
+    "note": "see deepbook-findings.md — price from getQuoteQuantityOut, needs small DEEP for fees"
+  }
+}

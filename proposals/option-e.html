@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tape — E · Spotlight</title>
+<style>
+  /* DNA-E: spotlight · one focal figure · horizontal proof flow · cinematic dark · restraint */
+  :root{
+    --bg:#060708; --s1:#0e1013; --s2:#14171c; --hair:rgba(255,255,255,.08);
+    --ink:#f0f3f7; --dim:#8a92a0; --faint:#565e6b;
+    --mint:#67e8c3; --bad:#ff7a85; --link:#93b4ff;
+    --sans:-apple-system,"Inter",Segoe UI,Roboto,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,monospace;
+    --r:14px; --rs:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:
+      radial-gradient(700px 460px at 50% 18%,rgba(103,232,195,.10),transparent 62%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .mono{font-family:var(--mono)}
+  .wrap{max-width:920px;margin:0 auto;padding:26px 26px 70px;text-align:center}
+  .bar{display:flex;align-items:center;justify-content:space-between;text-align:left}
+  .logo{font-weight:700;font-size:17px}.logo .d{color:var(--mint)}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--mint);
+    background:rgba(103,232,195,.08);border:1px solid rgba(103,232,195,.22);padding:5px 11px;border-radius:999px}
+  .pill .p{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+
+  .kicker{margin-top:64px;color:var(--mint);font-size:13px;letter-spacing:.16em;text-transform:uppercase}
+  .seal{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;
+    background:var(--mint);color:#052b25;font-weight:800;font-size:12px;vertical-align:middle;margin-right:8px;
+    box-shadow:0 0 0 6px rgba(103,232,195,.08)}
+  .figure{font-size:128px;font-weight:740;line-height:.92;margin:18px 0 6px;color:#fff;
+    text-shadow:0 0 70px rgba(103,232,195,.22)}
+  .figure .pct{color:var(--mint)}
+  .caption{color:var(--dim);font-size:15px}
+  .caption b{color:var(--ink)}
+
+  /* horizontal proof flow */
+  .flow{display:flex;align-items:center;justify-content:center;gap:0;margin:46px auto 0;max-width:780px}
+  .pf{flex:1;background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--hair);
+    border-radius:var(--r);padding:16px 14px;min-height:96px;display:flex;flex-direction:column;justify-content:center}
+  .pf .ic{font-size:16px;color:var(--mint);margin-bottom:8px}
+  .pf .t{font-size:13px;color:var(--ink);margin-bottom:4px}
+  .pf .v{font-size:11.5px;color:var(--dim);font-family:var(--mono)}
+  .pf .v a{color:var(--link);text-decoration:none}
+  .arrow{width:44px;flex:none;color:var(--faint);font-size:14px;text-align:center;position:relative}
+  .arrow small{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:9.5px;color:var(--faint);white-space:nowrap}
+  .pf.final{border-color:rgba(103,232,195,.4);background:linear-gradient(180deg,#10241f,#0e1a17)}
+  .pf.final .big{font-size:30px;font-weight:720;color:var(--mint)}
+
+  .verify{margin:42px auto 0;display:inline-flex;align-items:center;gap:10px;background:var(--mint);color:#052b25;
+    font-weight:700;font-size:15px;border:none;padding:15px 30px;border-radius:999px;cursor:pointer;
+    box-shadow:0 16px 40px -16px rgba(103,232,195,.5);transition:transform .15s ease-out,filter .15s ease-out}
+  .verify:hover{filter:brightness(1.05)} .verify:active{transform:translateY(1px)}
+  .vnote{margin-top:14px;color:var(--mint);font-size:13px}
+
+  /* secondary metric rail */
+  .rail{display:flex;justify-content:center;gap:10px;margin-top:54px;flex-wrap:wrap}
+  .chipm{background:var(--s1);border:1px solid var(--hair);border-radius:999px;padding:9px 16px;
+    display:flex;align-items:center;gap:9px;font-size:13px}
+  .chipm .mv{font-weight:680;color:var(--ink)} .chipm .mv.r{color:var(--bad)}
+  .chipm .mk{color:var(--dim)} .chipm .tk{color:var(--mint);font-size:11px}
+
+  /* contrast */
+  .contrast{display:flex;align-items:stretch;justify-content:center;gap:14px;margin-top:58px}
+  .vc{flex:1;max-width:330px;border:1px solid var(--hair);border-radius:var(--r);padding:22px;text-align:left}
+  .vc.ok{background:linear-gradient(180deg,rgba(103,232,195,.08),transparent);border-color:rgba(103,232,195,.3)}
+  .vc.no{background:linear-gradient(180deg,rgba(255,122,133,.06),transparent);border-color:rgba(255,122,133,.26)}
+  .vc .h{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:12px}
+  .vc.ok .h{color:var(--mint)} .vc.no .h{color:var(--bad)}
+  .vc .vn{font-size:40px;font-weight:720;color:#fff}
+  .vc .vt{color:var(--dim);font-size:12.5px;margin-top:10px;line-height:1.5}
+  .vc.no .vt{color:#9a7176}
+  .dot{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+  .dot.g{background:var(--mint);color:#052b25}.dot.r{background:var(--bad);color:#2a0a0e}
+  .foot{color:var(--faint);font-size:11.5px;margin:34px auto 0;max-width:74ch;line-height:1.6}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo">Tape<span class="d">.</span></div>
+      <span class="pill"><span class="p"></span>Live · Testnet</span>
+    </div>
+
+    <div class="kicker">Verified track record</div>
+    <div class="figure num"><span class="pct">+1.84%</span></div>
+    <div class="caption">net return after fees — <b>recomputed in your browser</b> from 63 on-chain records</div>
+
+    <!-- PROOF FLOW -->
+    <div class="flow">
+      <div class="pf">
+        <div class="ic">◆</div>
+        <div class="t">Walrus blob</div>
+        <div class="v"><a>1JKd…6tNs ↗</a></div>
+      </div>
+      <div class="arrow"><small>re-hash</small>→</div>
+      <div class="pf">
+        <div class="ic">#</div>
+        <div class="t">sha-256 matches</div>
+        <div class="v">27bc6258…a1 ✓</div>
+      </div>
+      <div class="arrow"><small>anchored</small>→</div>
+      <div class="pf">
+        <div class="ic">⛓</div>
+        <div class="t">Sui · Clock</div>
+        <div class="v"><a>14:47:19Z ↗</a></div>
+      </div>
+      <div class="arrow"><small>×24</small>→</div>
+      <div class="pf final">
+        <div class="ic" style="color:var(--mint)">✓</div>
+        <div class="t" style="color:var(--dim);font-size:11px">Recomputed</div>
+        <div class="big num">+1.84%</div>
+      </div>
+    </div>
+
+    <button class="verify">⟳ &nbsp;Verify it yourself</button>
+    <div class="vnote">✓ 24 blobs re-fetched & re-hashed — all match the on-chain anchors.</div>
+
+    <!-- SECONDARY METRICS -->
+    <div class="rail">
+      <div class="chipm"><span class="mk">Sharpe</span><span class="mv num">1.97</span><span class="tk">✓</span></div>
+      <div class="chipm"><span class="mk">Sortino</span><span class="mv num">2.84</span><span class="tk">✓</span></div>
+      <div class="chipm"><span class="mk">Max DD</span><span class="mv r num">−0.74%</span><span class="tk">✓</span></div>
+      <div class="chipm"><span class="mk">Win rate</span><span class="mv num">61.5%</span><span class="tk">✓</span></div>
+      <div class="chipm"><span class="mk">vs Hold-SUI</span><span class="mv num">+0.93%</span><span class="tk">✓</span></div>
+    </div>
+
+    <!-- CONTRAST -->
+    <div class="contrast">
+      <div class="vc ok">
+        <div class="h"><span class="dot g">✓</span> VERIFIED TAPE</div>
+        <div class="vn num">+1.84%</div>
+        <div class="vt">Backed by an immutable, complete, Clock-timestamped record. Anyone can re-derive it. Cannot be backdated.</div>
+      </div>
+      <div class="vc no">
+        <div class="h"><span class="dot r">✗</span> CLAIMED IN A DECK</div>
+        <div class="vn num">+312%</div>
+        <div class="vt">A number with no record behind it — simulated, backdated, or invented. You'd never know.</div>
+      </div>
+    </div>
+
+    <p class="foot">Tape proves the history is real — tamper-evident, complete, and not backdated. It does not predict future performance. Prices come from the Pyth oracle and are anchored too, so they can't be massaged after the fact.</p>
+  </div>
+</body>
+</html>

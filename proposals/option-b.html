@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tape — Option B · Attestation</title>
+<style>
+  /* DNA-B: calm · document · serif-display · ink-on-deep · attestation */
+  :root{
+    --bg:#0b0d12; --paper:#11141b; --line:#222734; --soft:#1a1e28;
+    --ink:#dfe5ee; --dim:#8a93a4; --faint:#525c6d;
+    --green:#54d398; --red:#f87171; --gold:#d8b66b; --accent:#7aa2f7;
+    --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,"Inter",Segoe UI,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6}
+  .num{font-variant-numeric:tabular-nums}
+  .wrap{max-width:880px;margin:0 auto;padding:56px 32px 80px}
+  /* masthead */
+  .mast{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--line);padding-bottom:18px}
+  .mast .name{font-family:var(--serif);font-size:30px;letter-spacing:.01em}
+  .mast .name .t{color:var(--gold)}
+  .mast .tag{font-family:var(--serif);font-style:italic;color:var(--dim);font-size:15px}
+  .lede{font-family:var(--serif);font-size:19px;line-height:1.55;color:var(--ink);margin:28px 0 8px;max-width:64ch}
+  .lede b{color:#fff}
+  .seal-row{display:flex;align-items:center;gap:10px;color:var(--green);font-size:13px;margin-top:18px}
+  .seal{width:22px;height:22px;border-radius:50%;background:var(--green);color:#04130c;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .meta-line{margin-top:6px;color:var(--faint);font-size:12.5px;font-family:var(--mono)}
+
+  h2.section{font-family:var(--serif);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-weight:500;margin:48px 0 16px;border-bottom:1px solid var(--line);padding-bottom:8px}
+
+  /* attestation table of metrics */
+  .ledger{width:100%;border-collapse:collapse}
+  .ledger tr{border-bottom:1px solid var(--soft)}
+  .ledger td{padding:14px 6px;vertical-align:middle}
+  .ledger .metric{font-family:var(--serif);font-size:16px}
+  .ledger .metric small{display:block;color:var(--faint);font-size:11.5px;font-family:var(--sans);letter-spacing:.03em}
+  .ledger .val{text-align:right;font-family:var(--mono);font-size:20px}
+  .ledger .val.g{color:var(--green)} .ledger .val.r{color:var(--red)}
+  .ledger .att{text-align:right;width:130px;color:var(--green);font-size:12px;white-space:nowrap}
+  .ledger .att .c{font-family:var(--mono);color:var(--accent);font-size:11px;display:block;margin-top:2px}
+  .ledger tr:hover{background:var(--paper)}
+
+  /* drill-down as a footnoted exhibit */
+  .exhibit{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:4px;padding:22px 24px;margin-top:8px}
+  .exhibit .eh{font-family:var(--serif);font-size:17px;margin:0 0 4px}
+  .exhibit .es{color:var(--dim);font-size:13px;margin-bottom:16px}
+  .formula{font-family:var(--mono);font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:12px 14px;color:var(--ink);margin-bottom:18px}
+  .formula em{color:var(--gold);font-style:normal}
+  .chain{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .node{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:12px 14px}
+  .node .nl{color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+  .node .r{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;font-family:var(--mono)}
+  .node .r span{color:var(--dim)} .node .r a{color:var(--accent)}
+  .verify{margin-top:18px;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--green);color:var(--green);background:transparent;padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:14px;cursor:pointer}
+  .verify:hover{background:rgba(84,211,152,.08)}
+  .verified-note{margin-top:12px;color:var(--green);font-size:13px}
+
+  /* the contrast — two attestations side by side */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px}
+  .att-card{border:1px solid var(--line);border-radius:6px;padding:24px}
+  .att-card.ok{border-color:rgba(84,211,152,.4);background:linear-gradient(180deg,rgba(84,211,152,.05),transparent)}
+  .att-card.no{border-color:rgba(248,113,113,.3);background:linear-gradient(180deg,rgba(248,113,113,.04),transparent)}
+  .att-card .label{display:flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.04em;margin-bottom:14px}
+  .att-card.ok .label{color:var(--green)} .att-card.no .label{color:var(--red)}
+  .att-card .figure{font-family:var(--serif);font-size:40px;color:#fff;line-height:1}
+  .att-card .desc{color:var(--dim);font-size:13px;margin-top:14px;line-height:1.5}
+  .att-card.no .desc{color:#9a7176}
+  .dotseal{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+  .dotseal.g{background:var(--green);color:#04130c} .dotseal.r{background:var(--red);color:#1b0608}
+  .disclaimer{font-family:var(--serif);font-style:italic;color:var(--faint);font-size:13px;margin-top:30px;border-top:1px solid var(--line);padding-top:18px;line-height:1.6}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="mast">
+      <div class="name">Tape<span class="t">.</span></div>
+      <div class="tag">The tape doesn't lie.</div>
+    </div>
+
+    <p class="lede">Attestation of trading performance for autonomous agent
+      <b>0x2b31…7587</b>, derived entirely from an append-only record on Walrus,
+      anchored on Sui. Every figure below is <b>recomputed in your browser</b> from
+      that record — no server is trusted.</p>
+    <div class="seal-row"><span class="seal">✓</span> 63 entries · 24 marks · complete &amp; in-sequence · timestamped by Sui Clock</div>
+    <div class="meta-line">TapeLog 0x0fd9…6ddb · period 2026-06-18 14:31→14:58Z · venue Pyth oracle / DeepBook v3 (testnet)</div>
+
+    <h2 class="section">Statement of performance</h2>
+    <table class="ledger">
+      <tr><td class="metric">Net return<small>after fees</small></td><td class="val g num">+1.84%</td><td class="att">✓ verified<span class="c">24 marks</span></td></tr>
+      <tr><td class="metric">Sharpe ratio<small>annualized</small></td><td class="val num">1.97</td><td class="att">✓ verified<span class="c">re-derivable</span></td></tr>
+      <tr><td class="metric">Sortino ratio<small>downside-adjusted</small></td><td class="val num">2.84</td><td class="att">✓ verified</td></tr>
+      <tr><td class="metric">Maximum drawdown<small>peak to trough</small></td><td class="val r num">−0.74%</td><td class="att">✓ verified</td></tr>
+      <tr><td class="metric">Win rate<small>13 of 21 closed</small></td><td class="val num">61.5%</td><td class="att">✓ verified</td></tr>
+      <tr><td class="metric">vs. Hold-SUI<small>benchmark delta</small></td><td class="val g num">+0.93%</td><td class="att">✓ verified</td></tr>
+    </table>
+
+    <h2 class="section">Exhibit · how "Sharpe = 1.97" is proven</h2>
+    <div class="exhibit">
+      <div class="eh">Sharpe ratio — 1.97</div>
+      <div class="es">Recomputed from 24 anchored marks (seq 0–62). Click any node to open the blob or the Sui transaction.</div>
+      <div class="formula">Sharpe = ( mean(<em>r</em>) − r<sub>f</sub> ) / σ(<em>r</em>) · √N,&nbsp; <em>r</em><sub>t</sub> = equity<sub>t</sub> / equity<sub>t−1</sub> − 1, read from the mark blobs</div>
+      <div class="chain">
+        <div class="node">
+          <div class="nl">Walrus blob · mark seq 60</div>
+          <div class="r"><span>blobId</span><a>1JKd_l3y…6tNs ↗</a></div>
+          <div class="r"><span>sha-256</span><a>27bc6258…a1</a></div>
+          <div class="r"><span>equity</span><span style="color:var(--ink)">$101.74</span></div>
+        </div>
+        <div class="node">
+          <div class="nl">Sui anchor · entry 60</div>
+          <div class="r"><span>txn</span><a>2BEuXdXt…Y2FZ ↗</a></div>
+          <div class="r"><span>clock</span><span style="color:var(--ink)">14:47:19Z</span></div>
+          <div class="r"><span>data_hash</span><span style="color:var(--green)">matches ✓</span></div>
+        </div>
+      </div>
+      <button class="verify"><span class="dotseal g">⟳</span> Verify independently</button>
+      <div class="verified-note">✓ Re-fetched 24 blobs, re-hashed each, all match the on-chain anchors. Sharpe recomputed = 1.97.</div>
+    </div>
+
+    <h2 class="section">Why this matters</h2>
+    <div class="twocol">
+      <div class="att-card ok">
+        <div class="label"><span class="dotseal g">✓</span> VERIFIED TAPE</div>
+        <div class="figure num">1.97</div>
+        <div class="desc">Sharpe, backed by an immutable, complete, Clock-timestamped record. Anyone can re-derive it from Walrus + Sui. Cannot be backdated or cherry-picked.</div>
+      </div>
+      <div class="att-card no">
+        <div class="label"><span class="dotseal r">✗</span> CLAIMED IN A DECK</div>
+        <div class="figure num">4.20</div>
+        <div class="desc">Sharpe, asserted with no record behind it. Could be simulated, backdated, or invented. The investor simply has to trust it.</div>
+      </div>
+    </div>
+
+    <p class="disclaimer">Tape proves the history is real — tamper-evident, complete, and not backdated. It does not assert that the strategy is good or that future performance will follow. Mark prices are sourced from the Pyth oracle and are themselves anchored, so they cannot be massaged after the fact; Tape inherits the oracle's trust assumption.</p>
+  </div>
+</body>
+</html>
