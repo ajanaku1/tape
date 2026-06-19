@@ -17,3 +17,4 @@ deploy/*.local.json
 PLAN.md
 plan.md
 prompt.md
+*.tsbuildinfo
